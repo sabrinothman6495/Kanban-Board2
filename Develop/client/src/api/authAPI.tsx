@@ -1,31 +1,28 @@
 import { UserLogin } from "../interfaces/UserLogin";
+import axios from 'axios';
 
-const login = async (userInfo: UserLogin) => {
-  // TODO: make a POST request to the login route
+const login = async (userInfo: UserLogin): Promise<any> => {
   try {
     // Send a POST request to '/auth/login' with user login information in JSON format
-    const response = await fetch('/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(userInfo)
+    const response = await axios.post('/auth/login', userInfo, {
+      headers: { 'Content-Type': 'application/json' }
     });
 
-    // Throw error if response status is not OK (200-299)
-    if (!response.ok) {
-      const errorData = await response.json(); // Parse error response as JSON
-      throw new Error(`Error: ${errorData.message}`); // Throw a detailed error message    
+    // If the response is successful, return the data directly (axios handles JSON parsing)
+    return response.data;
+  } catch (error: any) {
+    // Check if the error is a server response (error.response)
+    if (error.response) {
+      // Log and throw the server-provided error message if it exists
+      const errorMessage = error.response.data.message || 'Login failed';
+      console.log('Error from server:', errorMessage);
+      throw new Error(errorMessage);
+    } else {
+      // Handle network or other errors
+      console.log('Network or unexpected error:', error.message || 'An error occurred');
+      throw new Error('Could not connect to the server');
     }
-
-    // Parse the response body as JSON
-    const data = await response.json();
-
-    return data;  // Return the data received from the server
-  } catch (err) {
-    console.log('Error from user login: ', err);  // Log any errors that occur during fetch
-    return Promise.reject('Could not fetch user info');  // Return a rejected promise with an error message
   }
-}
+};
 
-export { login }
+export { login };
