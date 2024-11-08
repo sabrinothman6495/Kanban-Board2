@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 
-export const login = async (req: Request, res: Response): Promise<void> => {
+export const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;  // Extract username and password from request body
 
   // Find the user in the database by username
@@ -14,16 +14,14 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
   // If user is not found, send an authentication failed response
   if (!user) {
-    res.status(401).json({ message: 'Authentication failed' });
-    return;
+    return res.status(401).json({ message: 'Authentication failed' });
   }
 
   // Compare the provided password with the stored hashed password
   const passwordIsValid = await bcrypt.compare(password, user.password);
   // If password is invalid, send an authentication failed response
   if (!passwordIsValid) {
-    res.status(401).json({ message: 'Authentication failed' });
-    return;
+    return res.status(401).json({ message: 'Authentication failed' });
   }
 
   // Get the secret key from environment variables
@@ -31,7 +29,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
   // Generate a JWT token for the authenticated user
   const token = jwt.sign({ username }, secretKey, { expiresIn: '1h' });
-  res.json({ token });  // Send the token as a JSON response
+  return res.json({ token });  // Send the token as a JSON response
 };
 
 // Create a new router instance
