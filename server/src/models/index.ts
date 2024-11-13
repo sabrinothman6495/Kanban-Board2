@@ -1,7 +1,7 @@
-import dotenv from 'dotenv/lib/main.js';
+import dotenv from 'dotenv';
 dotenv.config();
 
-import { Sequelize } from 'sequelize/types/index.js';
+import { Sequelize } from 'sequelize';
 import { UserFactory } from './user.js';
 import { TicketFactory } from './ticket.js';
 
